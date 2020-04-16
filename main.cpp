@@ -7,7 +7,7 @@ using namespace std;
 
 struct Node {
 public:
-    string playerName;
+    int playerNum;
     Node* next;
 };
 
@@ -18,6 +18,7 @@ private:
 public:
     void CreateNode(int numPlayers);
     void PassPotato(int numPasses);
+    void DeleteNode(Node** nodeRef);
     void DumpList();
     ~ListManager();
 };
@@ -29,13 +30,13 @@ int main() {
     
     ListManager list;
     
-    list.CreateNode(2);
-    list.PassPotato(2);
+    list.CreateNode(5);
+    list.PassPotato(1);
 }
 
 void ListManager::CreateNode(int numPlayers) {
     ifstream inFile;
-    string name;
+    int num;
     head = new (std::nothrow) Node;
     
     inFile.open("/Users/stahl/Desktop/Pierce College/COSCI 136/LAB_4_STAHL_DANIEL/data.txt");
@@ -50,20 +51,20 @@ void ListManager::CreateNode(int numPlayers) {
     if (!head) {
         cout << "Can't allocate memory\n";
     } else {
-        inFile >> name;
-        head->playerName = name;
+        inFile >> num;
+        head->playerNum = num;
         head->next = head;
     }
     
     while ((!inFile.eof() && numPlayers > 1) && (head)) {
         Node* newHead = new (std::nothrow) Node;
         
-        inFile >> name;
+        inFile >> num;
         
         if (!newHead) {
             cout << "Cant allocate memory\n";
         } else {
-            newHead->playerName = name;
+            newHead->playerNum = num;
             newHead->next = head->next;
             head->next = newHead;
             head = newHead;
@@ -78,22 +79,53 @@ void ListManager::CreateNode(int numPlayers) {
 
 void ListManager::PassPotato(int numPasses) {
     Node* travList = head;
+    Node* next;
+    Node* prev;
+    int delNodePos;
     
-    cout << travList->playerName << "\n" << travList->next->playerName << "\n";
+    while (travList != travList->next) {
+        for (int x = 0; x <= numPasses; ++x) {
+            next = travList->next;
+            prev = travList;
+            travList = next;
+        }
+        
+        delNodePos = travList->playerNum;
+        cout << "Delete: Player " << delNodePos << "\n";
+        
+        DeleteNode(&prev);
+    }
     
+    cout << "Winner is: Player " << travList->playerNum << "\n";
+    
+}
+
+void ListManager::DeleteNode(Node** nodeRef) {
+    Node* temp = *nodeRef;
+    Node* deleteNode = temp->next;
+    temp->next = deleteNode->next;
+    delete deleteNode;
     
 }
 
 void ListManager::DumpList() {
-    Node* current = head;
-    Node* newHead;
-    
-    while (current != NULL) {
-        newHead = current->next;
-        delete current;
-        current = newHead;
-    
-    }
+//    Node* current = head;
+//    Node* newHead;
+//    int num = 2;
+//
+//    while (num > 0) {
+//
+//
+//
+//        cout << current->playerName << "\n" << current->next->playerName << "\n";
+//        num--;
+//
+//
+//        newHead = current->next;
+////        delete current;
+//        current = newHead;
+//    }
+//
 }
 
 ListManager::~ListManager() {
