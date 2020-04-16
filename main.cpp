@@ -5,35 +5,38 @@
 
 using namespace std;
 
-class Node {
+struct Node {
 public:
     string playerName;
-    Node* head;
     Node* next;
-    Node* prev;
-    
-    void CreatePlayers(int numPlayers);
-    void PassPotato(int numPasses);
-    void EmptyList();
-    ~Node();
-    
-    
 };
+
+class ListManager {
+private:
+    Node* head;
+    
+public:
+    void CreateNode(int numPlayers);
+    void PassPotato(int numPasses);
+    void DumpList();
+    ~ListManager();
+};
+
 
 int main() {
     int passes;
     int players;
     
-    Node hotPotato;
+    ListManager list;
     
-    hotPotato.CreatePlayers(4);
-    hotPotato.PassPotato(3);
+    list.CreateNode(2);
+    list.PassPotato(2);
 }
 
-void Node::CreatePlayers(int numPlayers) {
+void ListManager::CreateNode(int numPlayers) {
     ifstream inFile;
     string name;
-    Node* firstHead = new (std::nothrow) Node;
+    head = new (std::nothrow) Node;
     
     inFile.open("/Users/stahl/Desktop/Pierce College/COSCI 136/LAB_4_STAHL_DANIEL/data.txt");
     
@@ -44,21 +47,25 @@ void Node::CreatePlayers(int numPlayers) {
         cout << "File ready!\n";
     }
     
-    while ((!inFile.eof() && numPlayers > 0) || (!firstHead)) {
+    if (!head) {
+        cout << "Can't allocate memory\n";
+    } else {
+        inFile >> name;
+        head->playerName = name;
+        head->next = head;
+    }
+    
+    while ((!inFile.eof() && numPlayers > 1) && (head)) {
         Node* newHead = new (std::nothrow) Node;
         
         inFile >> name;
         
-        if (firstHead == nullptr) {
-            firstHead->playerName = name;
-            firstHead->next = firstHead;
-            head = firstHead;
-        } else if (!newHead) {
+        if (!newHead) {
             cout << "Cant allocate memory\n";
         } else {
             newHead->playerName = name;
-            newHead->next = firstHead->next;
-            firstHead->next = newHead;
+            newHead->next = head->next;
+            head->next = newHead;
             head = newHead;
         }
         
@@ -69,26 +76,26 @@ void Node::CreatePlayers(int numPlayers) {
     cout << "\nPlayers loaded\n";
 }
 
-void Node::PassPotato(int numPasses) {
+void ListManager::PassPotato(int numPasses) {
     Node* travList = head;
     
-    while (travList != nullptr) {
-        cout << travList->playerName << "\n";
-        travList = travList->next;
-    }
+    cout << travList->playerName << "\n" << travList->next->playerName << "\n";
+    
+    
 }
 
-void Node::EmptyList() {
-    Node* oldHead = head;
+void ListManager::DumpList() {
+    Node* current = head;
     Node* newHead;
     
-    while (oldHead != nullptr) {
-        newHead = oldHead->next;
-        delete oldHead;
-        oldHead = newHead;
+    while (current != NULL) {
+        newHead = current->next;
+        delete current;
+        current = newHead;
+    
     }
 }
 
-Node::~Node() {
-    EmptyList();
+ListManager::~ListManager() {
+    DumpList();
 }
