@@ -23,15 +23,48 @@ public:
     ~ListManager();
 };
 
+void GameMenu();
 
 int main() {
+    GameMenu();
+}
+
+void GameMenu() {
     int passes;
     int players;
-    
+    char userChoice;
     ListManager list;
     
-    list.CreateNode(5);
-    list.PassPotato(1);
+    cout << "Welcome to Pass the Potato Game!\n";
+    
+    do {
+        cout << "How many players?: ";
+        cin >> players;
+        
+        cout << "\n";
+        
+        cout << "How many passes?: ";
+        cin >> passes;
+        
+        cout << "\n";
+        
+        list.CreateNode(players);
+        list.PassPotato(passes);
+        
+        do {
+            cout << "Do you want to play again? (Y/N) ";
+            cin >> userChoice;
+            
+            if (!cin) {
+                cout << "That is not a valid option, please try again.\n";
+                cin.clear();
+                cin.ignore(100, '\n');
+            }
+        } while (!cin);
+    } while (userChoice == 'y' || userChoice == 'Y');
+    
+    
+    
 }
 
 void ListManager::CreateNode(int numPlayers) {
@@ -45,36 +78,33 @@ void ListManager::CreateNode(int numPlayers) {
         cout << "File does not exist\n";
         exit(1);
     } else {
-        cout << "File ready!\n";
-    }
-    
-    if (!head) {
-        cout << "Can't allocate memory\n";
-    } else {
-        inFile >> num;
-        head->playerNum = num;
-        head->next = head;
-    }
-    
-    while ((!inFile.eof() && numPlayers > 1) && (head)) {
-        Node* newHead = new (std::nothrow) Node;
-        
-        inFile >> num;
-        
-        if (!newHead) {
-            cout << "Cant allocate memory\n";
+        if (!head) {
+            cout << "Can't allocate memory\n";
         } else {
-            newHead->playerNum = num;
-            newHead->next = head->next;
-            head->next = newHead;
-            head = newHead;
+            inFile >> num;
+            head->playerNum = num;
+            head->next = head;
         }
         
-        numPlayers--;
+        while ((!inFile.eof() && numPlayers > 1) && (head)) {
+            Node* newHead = new (std::nothrow) Node;
+            
+            inFile >> num;
+            
+            if (!newHead) {
+                cout << "Cant allocate memory\n";
+            } else {
+                newHead->playerNum = num;
+                newHead->next = head->next;
+                head->next = newHead;
+                head = newHead;
+            }
+            
+            numPlayers--;
+        }
+        
+        inFile.close();
     }
-    
-    inFile.close();
-    cout << "\nPlayers loaded\n";
 }
 
 void ListManager::PassPotato(int numPasses) {
@@ -92,7 +122,7 @@ void ListManager::PassPotato(int numPasses) {
         
         if (travList != prev) {
             delNodePos = travList->playerNum;
-            cout << "Delete: Player " << delNodePos << "\n";
+            cout << "Player " << delNodePos << " is out!\n";
             
             DeleteNode(prev);
         }
@@ -100,7 +130,7 @@ void ListManager::PassPotato(int numPasses) {
     
     cout << "Winner is: Player " << travList->playerNum << "\n";
 }
-
+	
 void ListManager::DeleteNode(Node*& nodeRef) {
     Node* temp = nodeRef;
     Node* deleteNode = temp->next;
