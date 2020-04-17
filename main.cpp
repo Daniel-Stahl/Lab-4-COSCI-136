@@ -18,7 +18,7 @@ private:
 public:
     void CreateNode(int numPlayers);
     void PassPotato(int numPasses);
-    void DeleteNode(Node** nodeRef);
+    void DeleteNode(Node*& nodeRef);
     void DumpList();
     ~ListManager();
 };
@@ -90,44 +90,46 @@ void ListManager::PassPotato(int numPasses) {
             travList = next;
         }
         
-        delNodePos = travList->playerNum;
-        cout << "Delete: Player " << delNodePos << "\n";
-        
-        DeleteNode(&prev);
+        if (travList != prev) {
+            delNodePos = travList->playerNum;
+            cout << "Delete: Player " << delNodePos << "\n";
+            
+            DeleteNode(prev);
+        }
     }
     
     cout << "Winner is: Player " << travList->playerNum << "\n";
-    
 }
 
-void ListManager::DeleteNode(Node** nodeRef) {
-    Node* temp = *nodeRef;
+void ListManager::DeleteNode(Node*& nodeRef) {
+    Node* temp = nodeRef;
     Node* deleteNode = temp->next;
     temp->next = deleteNode->next;
-    delete deleteNode;
     
+    if (deleteNode == head) {
+        head = temp->next;
+    }
+    
+    delete deleteNode;
 }
 
 void ListManager::DumpList() {
-//    Node* current = head;
-//    Node* newHead;
-//    int num = 2;
-//
-//    while (num > 0) {
-//
-//
-//
-//        cout << current->playerName << "\n" << current->next->playerName << "\n";
-//        num--;
-//
-//
-//        newHead = current->next;
-////        delete current;
-//        current = newHead;
-//    }
-//
+    Node* current = head;
+    Node* nextNode;
+
+    while (current != current->next) {
+        nextNode = current->next;
+        current->next = nextNode->next;
+        
+        delete nextNode;
+    }
+
+    delete current;
 }
 
 ListManager::~ListManager() {
     DumpList();
 }
+
+
+
