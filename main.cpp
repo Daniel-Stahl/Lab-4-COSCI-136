@@ -1,3 +1,5 @@
+// LAB 3 STAHL, DANIEL T TH
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -29,6 +31,7 @@ int main() {
     GameMenu();
 }
 
+// Starts game loop
 void GameMenu() {
     int passes;
     int players;
@@ -53,7 +56,7 @@ void GameMenu() {
                 cout << "Number of players and passes must be a positive number\n";
             }
             
-        } while(players <= 0 || passes < 0); // Error message
+        } while(players <= 0 || passes < 0);
         list.CreateNode(players);
         list.PassPotato(passes);
         
@@ -68,11 +71,9 @@ void GameMenu() {
             }
         } while (!cin);
     } while (userChoice == 'y' || userChoice == 'Y');
-    
-    
-    
-}
+} // User can play again if enters Y else quit with N
 
+// Loads the game up with number of players
 void ListManager::CreateNode(int numPlayers) {
     ifstream inFile;
     int num;
@@ -111,8 +112,9 @@ void ListManager::CreateNode(int numPlayers) {
         
         inFile.close();
     }
-}
+} // Program finished loading players
 
+// Loops thru players and eliminates the player based on the number of passes
 void ListManager::PassPotato(int numPasses) {
     Node* travList = head;
     Node* next;
@@ -136,7 +138,8 @@ void ListManager::PassPotato(int numPasses) {
     
     cout << "Winner is: Player " << travList->playerNum << "\n";
 }
-	
+
+// Removes the player from the game
 void ListManager::DeleteNode(Node*& nodeRef) {
     Node* temp = nodeRef;
     Node* deleteNode = temp->next;
@@ -149,6 +152,7 @@ void ListManager::DeleteNode(Node*& nodeRef) {
     delete deleteNode;
 }
 
+// Deletes all the pointers before the program closes
 void ListManager::DumpList() {
     Node* current = head;
     Node* nextNode;
@@ -163,6 +167,7 @@ void ListManager::DumpList() {
     delete current;
 }
 
+// ListManager Deconstructor
 ListManager::~ListManager() {
     DumpList();
 }
