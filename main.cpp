@@ -38,16 +38,22 @@ void GameMenu() {
     cout << "Welcome to Pass the Potato Game!\n";
     
     do {
-        cout << "How many players?: ";
-        cin >> players;
+        do {
+            cout << "How many players?: ";
+            cin >> players;
         
-        cout << "\n";
+            cout << "\n";
         
         cout << "How many passes?: ";
         cin >> passes;
         
         cout << "\n";
-        
+            
+            if (players <= 0 || passes < 0) {
+                cout << "Number of players and passes must be a positive number\n";
+            }
+            
+        } while(players <= 0 || passes < 0); // Error message
         list.CreateNode(players);
         list.PassPotato(passes);
         
